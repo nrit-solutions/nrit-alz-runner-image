@@ -48,6 +48,7 @@ jobs:
           exit-code: "1"
           severity: CRITICAL
           ignore-unfixed: true
+          trivyignores: .trivyignore
 
       - name: Push
         id: push

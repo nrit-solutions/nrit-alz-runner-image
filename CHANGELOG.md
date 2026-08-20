@@ -20,3 +20,9 @@ CVE rebuilds are patch, removing or renaming a baked tool is major.
   nrit-tf-pr-ops hook gates.
 - Release pipeline: trivy scan failing on fixed CRITICAL findings, cosign
   keyless signature, and an SPDX SBOM attestation on every release digest.
+
+### Known waived findings
+
+- CVE-2026-59873 (node-tar gzip-bomb DoS) in the npm bundled inside the
+  GitHub Actions runner. No runner release ships the fixed tar yet; waived
+  in `.trivyignore` with the re-check condition documented there.

@@ -1,0 +1,9 @@
+# CVE-2026-59873: node-tar gzip-bomb DoS in the npm bundled inside the
+# GitHub Actions runner (externals/node20 and node24 copies). tar is fixed
+# in 7.5.19, but no runner release ships it yet, and the files are the
+# runner's own bundle, not something this Dockerfile installs or can
+# upgrade. DoS only, and the runner never npm-installs untrusted archives
+# on the plan/apply path. Added 2026-08-20 at runner 2.336.0; re-check on
+# every GH_RUNNER_VERSION bump and drop this entry when the bundled npm
+# carries tar >= 7.5.19.
+CVE-2026-59873
