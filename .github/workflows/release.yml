@@ -11,7 +11,8 @@ on:
 permissions:
   contents: read
   packages: write
-  id-token: write # cosign keyless signing
+  id-token: write # cosign keyless signing and the SBOM attestation
+  attestations: write # store the SBOM attestation with GitHub
 
 env:
   IMAGE: ghcr.io/${{ github.repository_owner }}/alz-runner
@@ -78,10 +79,16 @@ jobs:
           output-file: sbom.spdx.json
           upload-artifact: true
 
+      # A GitHub attestation, not a cosign one: the full SBOM is megabytes and
+      # the public Rekor log rejects payloads that size. Verify with
+      # gh attestation verify.
       - name: Attest the SBOM
-        run: cosign attest --yes --type spdxjson --predicate sbom.spdx.json "${IMAGE}@${DIGEST}"
-        env:
-          DIGEST: ${{ steps.push.outputs.digest }}
+        uses: actions/attest-sbom@c604332985a26aa8cf1bdc465b92731239ec6b9e # v4.1.0
+        with:
+          subject-name: ${{ env.IMAGE }}
+          subject-digest: ${{ steps.push.outputs.digest }}
+          sbom-path: sbom.spdx.json
+          push-to-registry: true
 
       - name: Print the pin
         run: echo "Release ${GITHUB_REF_NAME} pushed as ${IMAGE}@${{ steps.push.outputs.digest }}"

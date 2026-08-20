@@ -19,7 +19,9 @@ CVE rebuilds are patch, removing or renaming a baked tool is major.
   plus the NRIT tools layer with checkov 3.3.8 and conftest 0.68.2 for the
   nrit-tf-pr-ops hook gates.
 - Release pipeline: trivy scan failing on fixed CRITICAL findings, cosign
-  keyless signature, and an SPDX SBOM attestation on every release digest.
+  keyless signature, and an SPDX SBOM on every release digest, attached as
+  a GitHub attestation (`gh attestation verify`; the SBOM is too large for
+  the public Rekor log).
 
 ### Known waived findings
 
