@@ -9,10 +9,9 @@ on:
     tags: ["v*"]
 
 permissions:
-  contents: read
+  contents: write # create the GitHub release carrying the SBOM
   packages: write
-  id-token: write # cosign keyless signing and the SBOM attestation
-  attestations: write # store the SBOM attestation with GitHub
+  id-token: write # cosign keyless signing
 
 env:
   IMAGE: ghcr.io/${{ github.repository_owner }}/alz-runner
@@ -77,18 +76,22 @@ jobs:
           image: ${{ env.IMAGE }}@${{ steps.push.outputs.digest }}
           format: spdx-json
           output-file: sbom.spdx.json
-          upload-artifact: true
+          upload-artifact: false
 
-      # A GitHub attestation, not a cosign one: the full SBOM is megabytes and
-      # the public Rekor log rejects payloads that size. Verify with
-      # gh attestation verify.
-      - name: Attest the SBOM
-        uses: actions/attest-sbom@c604332985a26aa8cf1bdc465b92731239ec6b9e # v4.1.0
-        with:
-          subject-name: ${{ env.IMAGE }}
-          subject-digest: ${{ steps.push.outputs.digest }}
-          sbom-path: sbom.spdx.json
-          push-to-registry: true
+      # The full SBOM is over 16 MB, which both the public Rekor log and
+      # GitHub attestations reject as a payload. sign-blob puts only the hash
+      # in the transparency log, so the SBOM ships as a signed release asset.
+      - name: Sign the SBOM
+        run: cosign sign-blob --yes --bundle sbom.spdx.json.bundle sbom.spdx.json
+
+      - name: Create the release with the SBOM attached
+        run: |
+          gh release create "$GITHUB_REF_NAME" --verify-tag --title "$GITHUB_REF_NAME" \
+            --notes "${IMAGE}@${DIGEST} is the pin. See CHANGELOG.md for the changes." \
+            sbom.spdx.json sbom.spdx.json.bundle
+        env:
+          GH_TOKEN: ${{ github.token }}
+          DIGEST: ${{ steps.push.outputs.digest }}
 
       - name: Print the pin
         run: echo "Release ${GITHUB_REF_NAME} pushed as ${IMAGE}@${{ steps.push.outputs.digest }}"

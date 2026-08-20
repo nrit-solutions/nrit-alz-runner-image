@@ -63,14 +63,17 @@ cosign verify ghcr.io/nrit-solutions/alz-runner:<version> \
   --certificate-oidc-issuer https://token.actions.githubusercontent.com \
   --certificate-identity-regexp '^https://github.com/nrit-solutions/nrit-alz-runner-image/'
 
-gh attestation verify oci://ghcr.io/nrit-solutions/alz-runner:<version> \
-  --owner nrit-solutions --predicate-type https://spdx.dev/Document/v2.3
+cosign verify-blob --bundle sbom.spdx.json.bundle \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+  --certificate-identity-regexp '^https://github.com/nrit-solutions/nrit-alz-runner-image/' \
+  sbom.spdx.json
 ```
 
-The SBOM is a GitHub attestation rather than a cosign one, because the full
-SPDX document is megabytes and the public Rekor transparency log rejects
-payloads that size. The image signature itself is cosign keyless and is in
-Rekor.
+The SBOM and its signature bundle are assets on the GitHub release for the
+tag, not an in-registry attestation: the full SPDX document is over 16 MB,
+which both the public Rekor log and GitHub attestations reject as a payload.
+`sign-blob` records only the hash in the transparency log, so the SBOM stays
+complete and still verifies keyless.
 
 ## Consuming
 
