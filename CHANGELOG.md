@@ -24,9 +24,9 @@ CVE rebuilds are patch, removing or renaming a baked tool is major.
 
 ### Security
 
-- PyJWT lifted to 2.14.0 or later when checkov pulls it in
+- PyJWT lifted to 2.14.0 or later inside the az CLI's bundled Python
   (CVE-2026-102268, critical). The release scan had failed on it since
-  2026-10-08.
+  2026-10-08. Drop the step once an az release ships the fix.
 - CI and release free the hosted runner's disk before the trivy scan; the
   image export no longer runs out of space.
 
