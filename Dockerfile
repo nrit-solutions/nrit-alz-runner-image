@@ -61,6 +61,9 @@ RUN apt-get update \
   && apt-get install -y --no-install-recommends python3 python3-pip \
   && rm -rf /var/lib/apt/lists/*
 RUN pip3 install --no-cache-dir --break-system-packages "checkov==${CHECKOV_VERSION}"
+# checkov's dependency tree floats (nrit-alz-runner-image#7); lift the one
+# transitive package with a known critical CVE above the fixed version.
+RUN if pip3 show PyJWT >/dev/null 2>&1; then pip3 install --no-cache-dir --break-system-packages "PyJWT>=2.14.0"; fi
 RUN curl -sSfL -O "https://github.com/open-policy-agent/conftest/releases/download/v${CONFTEST_VERSION}/conftest_${CONFTEST_VERSION}_Linux_x86_64.tar.gz" \
   && curl -sSfL -O "https://github.com/open-policy-agent/conftest/releases/download/v${CONFTEST_VERSION}/checksums.txt" \
   && grep " conftest_${CONFTEST_VERSION}_Linux_x86_64.tar.gz$" checksums.txt | sha256sum -c - \

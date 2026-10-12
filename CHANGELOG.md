@@ -22,6 +22,14 @@ CVE rebuilds are patch, removing or renaming a baked tool is major.
 - `gosu` added so the entrypoint can drop privileges, as the upstream
   entrypoint already expected.
 
+### Security
+
+- PyJWT lifted to 2.14.0 or later when checkov pulls it in
+  (CVE-2026-102268, critical). The release scan had failed on it since
+  2026-10-08.
+- CI and release free the hosted runner's disk before the trivy scan; the
+  image export no longer runs out of space.
+
 ## [1.0.0] - 2026-08-20
 
 ### Added
