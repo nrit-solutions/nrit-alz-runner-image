@@ -9,6 +9,8 @@ CVE rebuilds are patch, removing or renaming a baked tool is major.
 
 ## [Unreleased]
 
+## [2.0.0] - 2026-10-12
+
 ### Changed
 
 - **Breaking:** jobs run as the `runner` user (uid 1001) instead of root, and
