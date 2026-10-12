@@ -13,7 +13,7 @@ RUN apt-get update \
   jq \
   git \
   dumb-init \
-  sudo \
+  gosu \
   iputils-ping \
   libcurl4 \
   libunwind8 \
@@ -27,10 +27,11 @@ SHELL ["/bin/bash", "-eo", "pipefail", "-c"]
 
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 
+# NRIT change: no sudo. Jobs run as this user (see entrypoint.sh) and must
+# not be able to read the registration secrets held by the root-owned
+# entrypoint (nrit-alz-runner-image#6).
 RUN groupadd -g 121 runner \
-  && useradd -mr -d /home/runner -u 1001 -g 121 runner \
-  && usermod -aG sudo runner \
-  && echo '%sudo ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+  && useradd -mr -d /home/runner -u 1001 -g 121 runner
 
 ENV AGENT_TOOLSDIRECTORY=/opt/hostedtoolcache
 RUN mkdir -p /opt/hostedtoolcache

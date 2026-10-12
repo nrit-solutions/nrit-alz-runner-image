@@ -52,7 +52,10 @@ _RUNNER_WORKDIR=${RUNNER_WORKDIR:-/_work/${_RUNNER_NAME}}
 _LABELS=${LABELS:-default}
 _RUNNER_GROUP=${RUNNER_GROUP:-Default}
 _GITHUB_HOST=${GITHUB_HOST:="github.com"}
-_RUN_AS_ROOT=${RUN_AS_ROOT:="true"}
+# NRIT change: upstream defaults to root. Jobs run PR-authored code, so they
+# run as the runner user and cannot read /proc/1/environ, which still holds
+# APP_PRIVATE_KEY for the life of the container (nrit-alz-runner-image#6).
+_RUN_AS_ROOT=${RUN_AS_ROOT:="false"}
 _START_DOCKER_SERVICE=${START_DOCKER_SERVICE:="false"}
 
 # ensure backwards compatibility
@@ -184,9 +187,7 @@ fi
 # Start docker service if needed (e.g. for docker-in-docker)
 if [[ ${_START_DOCKER_SERVICE} == "true" ]]; then
   echo "Starting docker service"
-  _PREFIX=""
-  [[ ${_RUN_AS_ROOT} != "true" ]] && _PREFIX="sudo"
-  ${_PREFIX} service docker start
+  service docker start
 fi
 
 # Container's command (CMD) execution as runner user

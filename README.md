@@ -33,12 +33,26 @@ Everything above the NRIT markers in the `Dockerfile` is vendored from
 `Azure/avm-container-images-cicd-agents-and-runners` at ref `9b4c292` (the
 `github-runner-aca` folder), the same source the AVM runner module builds by
 default. The four helper scripts (`install_actions.sh`, `token.sh`,
-`entrypoint.sh`, `app_token.sh`) are copied verbatim. Two NRIT changes on
-top of upstream:
+`entrypoint.sh`, `app_token.sh`) are copied from there. Three NRIT changes
+on top of upstream:
 
 - an `ARG GH_RUNNER_VERSION` pin, because upstream downloads the latest
   runner at build time and a tagged image must not float,
-- the tools layer described above.
+- the tools layer described above,
+- the job user: upstream runs jobs as root with passwordless `sudo`; this
+  image runs them as `runner` and ships no `sudo` (see below).
+
+## Job user
+
+Jobs run PR-authored code, so they run as the `runner` user (uid 1001), not
+root. The entrypoint stays root and holds the runner registration secrets
+(the runners App private key arrives as `APP_PRIVATE_KEY` in the container
+environment and remains in `/proc/1/environ` for the life of the container).
+A non-root job cannot read that file, and without `sudo` it cannot become
+root. CI checks both on every pull request.
+
+`RUN_AS_ROOT=true` on the container restores the upstream behaviour. Do not
+set it for a runner that serves pull-request workflows.
 
 To pick up a newer upstream base: re-copy the upstream files at a new ref,
 re-apply the marked NRIT blocks, update the ref in this README and the
