@@ -13,7 +13,7 @@ RUN apt-get update \
   jq \
   git \
   dumb-init \
-  sudo \
+  gosu \
   iputils-ping \
   libcurl4 \
   libunwind8 \
@@ -26,11 +26,15 @@ RUN apt-get update \
 SHELL ["/bin/bash", "-eo", "pipefail", "-c"]
 
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
+# NRIT addition: the az CLI bundles PyJWT 2.13.0 (CVE-2026-102268, critical)
+# in its own Python. Lift it until an az release ships the fixed version.
+RUN /opt/az/bin/python3 -m pip install --no-cache-dir --root-user-action=ignore "PyJWT>=2.14.0"
 
+# NRIT change: no sudo. Jobs run as this user (see entrypoint.sh) and must
+# not be able to read the registration secrets held by the root-owned
+# entrypoint (nrit-alz-runner-image#6).
 RUN groupadd -g 121 runner \
-  && useradd -mr -d /home/runner -u 1001 -g 121 runner \
-  && usermod -aG sudo runner \
-  && echo '%sudo ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+  && useradd -mr -d /home/runner -u 1001 -g 121 runner
 
 ENV AGENT_TOOLSDIRECTORY=/opt/hostedtoolcache
 RUN mkdir -p /opt/hostedtoolcache

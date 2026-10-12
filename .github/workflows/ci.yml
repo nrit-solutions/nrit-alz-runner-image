@@ -24,6 +24,13 @@ jobs:
           load: true
           tags: local/alz-runner:pr
 
+      # The image is over 3 GB and trivy exports it to the runner's root disk,
+      # which the preinstalled toolchains leave too full for the export.
+      - name: Free disk space for the scan
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL
+          df -h / | tail -1
+
       - name: Vulnerability scan
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
@@ -42,4 +49,16 @@ jobs:
             az version --output none
             git --version
             jq --version
+          '
+
+      # Jobs run as the runner user and must not reach the secrets the
+      # root-owned entrypoint holds (nrit-alz-runner-image#6). PID 1 in this
+      # container stands in for dumb-init.
+      - name: Job user cannot read the entrypoint environment
+        run: |
+          docker run --rm --entrypoint "" -e PROBE_MARKER=present local/alz-runner:pr bash -ec '
+            if command -v sudo >/dev/null; then echo "sudo is installed"; exit 1; fi
+            test "$(gosu runner id -u)" = 1001
+            if gosu runner cat /proc/1/environ >/dev/null 2>&1; then echo "runner can read /proc/1/environ"; exit 1; fi
+            test "$(gosu runner cat /proc/self/environ | tr "\0" "\n" | grep -c "^PROBE_MARKER=")" = 1
           '

@@ -9,6 +9,27 @@ CVE rebuilds are patch, removing or renaming a baked tool is major.
 
 ## [Unreleased]
 
+### Changed
+
+- **Breaking:** jobs run as the `runner` user (uid 1001) instead of root, and
+  `sudo` is no longer installed. A probe on 2026-10-12 confirmed that a job
+  step running as root could read the runners App private key from the
+  entrypoint's environment (`/proc/1/environ`); a non-root job cannot. Any
+  workflow step that relied on root or `sudo` on the self-hosted runner
+  breaks. Nothing in the engine, the gate scripts or the consumer callers
+  did. `RUN_AS_ROOT=true` restores the old behaviour for a single
+  deployment and is not recommended. Closes #6.
+- `gosu` added so the entrypoint can drop privileges, as the upstream
+  entrypoint already expected.
+
+### Security
+
+- PyJWT lifted to 2.14.0 or later inside the az CLI's bundled Python
+  (CVE-2026-102268, critical). The release scan had failed on it since
+  2026-10-08. Drop the step once an az release ships the fix.
+- CI and release free the hosted runner's disk before the trivy scan; the
+  image export no longer runs out of space.
+
 ## [1.0.0] - 2026-08-20
 
 ### Added

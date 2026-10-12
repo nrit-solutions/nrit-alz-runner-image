@@ -40,6 +40,13 @@ jobs:
           load: true
           tags: local/alz-runner:scan
 
+      # The image is over 3 GB and trivy exports it to the runner's root disk,
+      # which the preinstalled toolchains leave too full for the export.
+      - name: Free disk space for the scan
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /usr/local/.ghcup /opt/hostedtoolcache/CodeQL
+          df -h / | tail -1
+
       - name: Vulnerability scan
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         with:
