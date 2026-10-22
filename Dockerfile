@@ -27,8 +27,9 @@ SHELL ["/bin/bash", "-eo", "pipefail", "-c"]
 
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
 # NRIT addition: the az CLI bundles PyJWT 2.13.0 (CVE-2026-102268, critical)
-# in its own Python. Lift it until an az release ships the fixed version.
-RUN /opt/az/bin/python3 -m pip install --no-cache-dir --root-user-action=ignore "PyJWT>=2.14.0"
+# and certifi 2024.7.4 (GHSA-6q48-6c7w-9gw2, critical) in its own Python.
+# Lift both until an az release ships the fixed versions.
+RUN /opt/az/bin/python3 -m pip install --no-cache-dir --root-user-action=ignore "PyJWT>=2.14.0" "certifi>=2026.10.19"
 
 # NRIT change: no sudo. Jobs run as this user (see entrypoint.sh) and must
 # not be able to read the registration secrets held by the root-owned
