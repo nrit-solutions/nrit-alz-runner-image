@@ -20,7 +20,7 @@ The upstream AVM `github-runner-aca` image plus one tools layer:
 | Layer | Contents |
 |---|---|
 | Base | `mcr.microsoft.com/azure-powershell:ubuntu-24.04`, az CLI, the GitHub Actions runner (pinned via `GH_RUNNER_VERSION`), helper scripts |
-| NRIT tools | `checkov` and `conftest`, pinned by build args, for the nrit-tf-pr-ops policy and scan hook gates |
+| NRIT tools | `checkov` and `conftest`, pinned by build args, for the nrit-tfpr policy and scan hook gates |
 
 `checkov` is Python-only with no static binary, which is why it lives in the
 image. `infracost` is a static binary the engine installs per run when the
