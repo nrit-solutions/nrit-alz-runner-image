@@ -13,10 +13,11 @@ CVE rebuilds are patch, removing or renaming a baked tool is major.
 
 ### Security
 
-- The az CLI's bundled Python gets certifi 2026.10.19 or later. Its own copy,
-  2024.7.4, trusts emSign root CAs whose intermediate keys were compromised
-  (GHSA-6q48-6c7w-9gw2, critical), and the release scan failed every build on
-  it. Closes #12.
+- The az CLI's bundled Python gets certifi 2026.10.19 or later and pip
+  26.2.2 or later. Its own certifi 2024.7.4 and the certifi 2026.6.17 that
+  its pip 26.2.1 vendors trust emSign root CAs whose intermediate keys were
+  compromised (GHSA-6q48-6c7w-9gw2, critical), and the release scan failed
+  every build on them. Closes #12.
 
 ## [2.0.0] - 2026-10-12
 
