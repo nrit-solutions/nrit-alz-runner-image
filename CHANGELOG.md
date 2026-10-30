@@ -9,6 +9,12 @@ CVE rebuilds are patch, removing or renaming a baked tool is major.
 
 ## [Unreleased]
 
+### Added
+
+- The repository is public, so releases, release notes and the signed SBOM
+  are visible to every consumer (#10). It ships under Apache-2.0 with a
+  NOTICE that keeps the MIT license of the vendored AVM files.
+
 ## [2.0.1] - 2026-10-22
 
 ### Security

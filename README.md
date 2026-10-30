@@ -112,3 +112,8 @@ the signature and SBOM verify against the imported copy too. Sovereignty
 customers who must build from source set the bootstrap's `runner_image_commit`,
 which builds `nrit-alz-bootstrap/runner-image/github-runner-aca` in an
 in-tenant ACR build task.
+
+## License
+
+Apache License 2.0, see [LICENSE](LICENSE). The files vendored from the AVM
+runner images stay under their MIT license, see [NOTICE](NOTICE).
