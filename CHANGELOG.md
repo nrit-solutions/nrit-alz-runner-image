@@ -9,6 +9,14 @@ CVE rebuilds are patch, removing or renaming a baked tool is major.
 
 ## [Unreleased]
 
+### Changed
+
+- checkov 3.3.8 to 3.4.0 and conftest 0.68.2 to 0.71.1, the versions the
+  nrit-tfpr scan and policy gates run. No change to how the gates call them.
+- The workflows take the Dependabot action bumps:
+  `docker/setup-buildx-action` 4.4.1 (#3), `docker/build-push-action` 7.4.0
+  (#4) and `docker/login-action` 4.7.0 (#14).
+
 ### Added
 
 - The repository is public, so releases, release notes and the signed SBOM
