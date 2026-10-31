@@ -9,16 +9,21 @@ CVE rebuilds are patch, removing or renaming a baked tool is major.
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-10-31
+
 ### Changed
 
 - checkov 3.3.8 to 3.4.0 and conftest 0.68.2 to 0.71.1, the versions the
   nrit-tfpr scan and policy gates run. No change to how the gates call them.
 - The workflows take the Dependabot action bumps:
   `docker/setup-buildx-action` 4.4.1 (#3), `docker/build-push-action` 7.4.0
-  (#4) and `docker/login-action` 4.7.0 (#14).
+  (#4), `docker/login-action` 4.7.0 (#14) and `anchore/sbom-action` 0.24.3
+  (#5).
 
 ### Added
 
+- `SECURITY.md` names private vulnerability reporting on this repository as
+  the route for security problems, with scope and response times.
 - The repository is public, so releases, release notes and the signed SBOM
   are visible to every consumer (#10). It ships under Apache-2.0 with a
   NOTICE that keeps the MIT license of the vendored AVM files.
