@@ -9,6 +9,8 @@ CVE rebuilds are patch, removing or renaming a baked tool is major.
 
 ## [Unreleased]
 
+## [2.3.0] - 2026-11-09
+
 ### Changed
 
 - The image starts the runner through `run.sh` instead of the listener
