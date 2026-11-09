@@ -9,6 +9,15 @@ CVE rebuilds are patch, removing or renaming a baked tool is major.
 
 ## [Unreleased]
 
+## [2.2.0] - 2026-11-09
+
+### Changed
+
+- The GitHub Actions runner 2.336.0 to 2.338.2. GitHub stopped handing
+  jobs to 2.336.0 about 30 days after 2.338.0 shipped, and the ephemeral
+  runners exited while trying to update, so live's queued jobs were never
+  picked up from 2026-11-05 (nrit-alz-live#468).
+
 ## [2.1.0] - 2026-10-31
 
 ### Changed

@@ -44,7 +44,7 @@ RUN mkdir -p /opt/hostedtoolcache
 # NRIT addition: pin the runner version, so a tagged image never floats to
 # latest. Upstream leaves both unset and install_actions.sh then downloads
 # whatever actions/runner released last. TARGETPLATFORM is filled by buildx.
-ARG GH_RUNNER_VERSION=2.336.0
+ARG GH_RUNNER_VERSION=2.338.2
 ARG TARGETPLATFORM
 
 WORKDIR /actions-runner
