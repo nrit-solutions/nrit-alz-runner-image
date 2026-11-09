@@ -190,6 +190,20 @@ if [[ ${_START_DOCKER_SERVICE} == "true" ]]; then
   service docker start
 fi
 
+# NRIT addition: an ephemeral runner that gets no job within RUNNER_IDLE_TIMEOUT
+# seconds stops, so a runner GitHub never serves costs minutes, not the replica timeout.
+_IDLE_STOP=/tmp/runner-idle-stop
+if [[ -n "${EPHEMERAL}" && "${RUNNER_IDLE_TIMEOUT:-600}" != "0" ]]; then
+  (
+    sleep "${RUNNER_IDLE_TIMEOUT:-600}"
+    if ! compgen -G "/actions-runner/_diag/Worker_*.log" >/dev/null; then
+      echo "No job within ${RUNNER_IDLE_TIMEOUT:-600}s: stopping the idle runner"
+      touch "${_IDLE_STOP}"
+      pkill -TERM -f Runner.Listener
+    fi
+  ) &
+fi
+
 # Container's command (CMD) execution as runner user
 
 
@@ -211,3 +225,8 @@ else
     "$@"
   fi
 fi
+status=$?
+
+# NRIT addition: an idle stop is a clean exit, so the job does not retry the replica.
+[[ -f "${_IDLE_STOP}" ]] && exit 0
+exit "${status}"
