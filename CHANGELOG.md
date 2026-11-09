@@ -9,6 +9,15 @@ CVE rebuilds are patch, removing or renaming a baked tool is major.
 
 ## [Unreleased]
 
+### Changed
+
+- The image starts the runner through `run.sh` instead of the listener
+  directly. A runner older than GitHub's current release downloads the update
+  at start-up and runs its job, where it used to exit with code 4 and leave the
+  job queued: the cause of the 2026-11-05 outage (#19). The runner that runs
+  can therefore be newer than `GH_RUNNER_VERSION`; bumping the pin removes the
+  start-up download.
+
 ### Added
 
 - An ephemeral runner that gets no job within `RUNNER_IDLE_TIMEOUT` seconds

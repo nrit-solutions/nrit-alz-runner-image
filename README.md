@@ -42,6 +42,14 @@ on top of upstream:
 
 - an `ARG GH_RUNNER_VERSION` pin, because upstream downloads the latest
   runner at build time and a tagged image must not float,
+- `CMD ["./run.sh"]` instead of upstream's direct listener start, so a runner
+  that GitHub asks to update re-launches after the update and runs its job.
+  GitHub stops handing jobs to a runner about 30 days after a newer release;
+  with the direct start an old image exited on the update and left jobs
+  queued (#19). The pin still sets what the image ships; an image older than
+  GitHub's current runner updates at start-up until it is bumped,
+- a watchdog in `entrypoint.sh` that stops an ephemeral runner with no job
+  after `RUNNER_IDLE_TIMEOUT` seconds (default 600, `0` turns it off),
 - the tools layer described above,
 - a PyJWT lift inside the az CLI's bundled Python, for a critical CVE the
   current az release still ships,
