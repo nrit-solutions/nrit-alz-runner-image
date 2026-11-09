@@ -74,8 +74,8 @@ RUN curl -sSfL -O "https://github.com/open-policy-agent/conftest/releases/downlo
   && conftest --version \
   && checkov --version
 
-COPY token.sh entrypoint.sh app_token.sh /
-RUN chmod +x /token.sh /entrypoint.sh /app_token.sh
+COPY token.sh entrypoint.sh app_token.sh queued_jobs.sh /
+RUN chmod +x /token.sh /entrypoint.sh /app_token.sh /queued_jobs.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
 # NRIT change: run.sh re-launches the listener after a runner self-update; upstream's

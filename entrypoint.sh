@@ -192,15 +192,37 @@ fi
 
 # NRIT addition: an ephemeral runner that gets no job within RUNNER_IDLE_TIMEOUT
 # seconds stops, so a runner GitHub never serves costs minutes, not the replica timeout.
+# A runner that could have served an already queued job logs RUNNER_STALLED, the line the bootstrap's alert matches, and fails.
 _IDLE_STOP=/tmp/runner-idle-stop
+_IDLE_STALLED=/tmp/runner-idle-stalled
+
+runner_got_job() {
+  compgen -G "/actions-runner/_diag/Worker_*.log" >/dev/null
+}
+
 if [[ -n "${EPHEMERAL}" && "${RUNNER_IDLE_TIMEOUT:-600}" != "0" ]]; then
   (
+    _LISTENING_SINCE=$(date -u +%Y-%m-%dT%H:%M:%SZ)
     sleep "${RUNNER_IDLE_TIMEOUT:-600}"
-    if ! compgen -G "/actions-runner/_diag/Worker_*.log" >/dev/null; then
-      echo "No job within ${RUNNER_IDLE_TIMEOUT:-600}s: stopping the idle runner"
-      touch "${_IDLE_STOP}"
-      pkill -TERM -f Runner.Listener
+    runner_got_job && exit 0
+
+    _QUEUE_STATE=2
+    if [[ ${RUNNER_SCOPE} == "repo" && -n "${ACCESS_TOKEN}" ]]; then
+      ACCESS_TOKEN="${ACCESS_TOKEN}" LISTENING_SINCE="${_LISTENING_SINCE}" bash /queued_jobs.sh
+      _QUEUE_STATE=$?
     fi
+    runner_got_job && exit 0
+
+    case ${_QUEUE_STATE} in
+      0) echo "No job within ${RUNNER_IDLE_TIMEOUT:-600}s and none queued: stopping the idle runner" ;;
+      1)
+        echo "RUNNER_STALLED: jobs are queued but GitHub gave this runner none in ${RUNNER_IDLE_TIMEOUT:-600}s"
+        touch "${_IDLE_STALLED}"
+        ;;
+      *) echo "No job within ${RUNNER_IDLE_TIMEOUT:-600}s and the job queue could not be read: stopping the idle runner" ;;
+    esac
+    touch "${_IDLE_STOP}"
+    pkill -TERM -f Runner.Listener
   ) &
 fi
 
@@ -227,6 +249,7 @@ else
 fi
 status=$?
 
-# NRIT addition: an idle stop is a clean exit, so the job does not retry the replica.
+# NRIT addition: a normal idle stop is a clean exit, a stalled runner is a failed execution.
+[[ -f "${_IDLE_STALLED}" ]] && exit 1
 [[ -f "${_IDLE_STOP}" ]] && exit 0
 exit "${status}"

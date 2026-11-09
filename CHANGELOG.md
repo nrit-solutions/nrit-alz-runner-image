@@ -9,6 +9,17 @@ CVE rebuilds are patch, removing or renaming a baked tool is major.
 
 ## [Unreleased]
 
+## [2.4.0] - 2026-11-09
+
+### Changed
+
+- The idle watchdog tells a quiet repository from a stall. A runner that got
+  no job while a job it could serve was already queued logs one
+  `RUNNER_STALLED:` line and exits 1, the 2026-11-05 failure mode, which the
+  clean exit hid. With nothing queued, or when the queue cannot be read, it
+  exits 0 as before. Reading the queue needs Actions read, which the runners
+  App already has (#22).
+
 ## [2.3.0] - 2026-11-09
 
 ### Changed
