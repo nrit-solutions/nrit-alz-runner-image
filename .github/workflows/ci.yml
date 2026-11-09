@@ -49,6 +49,7 @@ jobs:
             az version --output none
             git --version
             jq --version
+            pkill --version
           '
 
       # Jobs run as the runner user and must not reach the secrets the

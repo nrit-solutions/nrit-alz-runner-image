@@ -9,6 +9,16 @@ CVE rebuilds are patch, removing or renaming a baked tool is major.
 
 ## [Unreleased]
 
+### Added
+
+- An ephemeral runner that gets no job within `RUNNER_IDLE_TIMEOUT` seconds
+  (default 600, `0` turns it off) stops and exits cleanly, so the job does not
+  retry it. A runner GitHub never serves, as in the 2026-11-05 outage, now
+  costs ten minutes instead of the two-hour replica timeout (#19).
+- A weekly `runner-version` workflow opens an issue when a newer GitHub Actions
+  runner is released, with the date by which GitHub stops serving the pinned
+  one.
+
 ## [2.2.0] - 2026-11-09
 
 ### Changed
