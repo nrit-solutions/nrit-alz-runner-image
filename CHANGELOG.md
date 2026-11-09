@@ -9,6 +9,8 @@ CVE rebuilds are patch, removing or renaming a baked tool is major.
 
 ## [Unreleased]
 
+## [2.2.0] - 2026-11-09
+
 ### Changed
 
 - The GitHub Actions runner 2.336.0 to 2.338.2. GitHub stopped handing
