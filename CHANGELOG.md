@@ -9,6 +9,8 @@ CVE rebuilds are patch, removing or renaming a baked tool is major.
 
 ## [Unreleased]
 
+## [2.4.0] - 2026-11-09
+
 ### Changed
 
 - The idle watchdog tells a quiet repository from a stall. A runner that got
