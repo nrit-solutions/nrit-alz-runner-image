@@ -1,0 +1,24 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "enabledManagers": ["custom.regex"],
+  "prHourlyLimit": 0,
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "The GitHub Actions runner the image ships. GitHub stops serving a runner about 30 days after a newer release (#19).",
+      "managerFilePatterns": ["/^Dockerfile$/"],
+      "matchStrings": ["ARG GH_RUNNER_VERSION=(?<currentValue>\\d+\\.\\d+\\.\\d+)"],
+      "depNameTemplate": "actions/runner",
+      "datasourceTemplate": "github-releases",
+      "extractVersionTemplate": "^v(?<version>.*)$"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchDepNames": ["actions/runner"],
+      "commitMessageTopic": "the GitHub Actions runner",
+      "semanticCommitType": "feat"
+    }
+  ]
+}

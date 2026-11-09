@@ -24,9 +24,9 @@ CVE rebuilds are patch, removing or renaming a baked tool is major.
   (default 600, `0` turns it off) stops and exits cleanly, so the job does not
   retry it. A runner GitHub never serves, as in the 2026-11-05 outage, now
   costs ten minutes instead of the two-hour replica timeout (#19).
-- A weekly `runner-version` workflow opens an issue when a newer GitHub Actions
-  runner is released, with the date by which GitHub stops serving the pinned
-  one.
+- Renovate opens a pull request that bumps `GH_RUNNER_VERSION` when GitHub
+  releases a new Actions runner (`.github/renovate.json`; Dependabot still owns
+  the workflow actions).
 
 ## [2.2.0] - 2026-11-09
 
