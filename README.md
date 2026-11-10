@@ -51,7 +51,7 @@ on top of upstream:
 - a watchdog in `entrypoint.sh` that stops an ephemeral runner with no job
   after `RUNNER_IDLE_TIMEOUT` seconds (default 600, `0` turns it off). If a
   job the runner could serve was already queued when it came online, the
-  runner logs a `RUNNER_STALLED:` line and exits 1, so the failure can alert,
+  runner logs a `RUNNER_STALLED:` line and exits 1,
 - the tools layer described above,
 - a PyJWT lift inside the az CLI's bundled Python, for a critical CVE the
   current az release still ships,
