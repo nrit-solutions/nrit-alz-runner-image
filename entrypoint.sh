@@ -192,7 +192,7 @@ fi
 
 # NRIT addition: an ephemeral runner that gets no job within RUNNER_IDLE_TIMEOUT
 # seconds stops, so a runner GitHub never serves costs minutes, not the replica timeout.
-# A runner that could have served an already queued job logs RUNNER_STALLED, the line the bootstrap's alert matches, and fails.
+# A runner that could have served an already queued job logs RUNNER_STALLED and fails, so it shows as a failed execution.
 _IDLE_STOP=/tmp/runner-idle-stop
 _IDLE_STALLED=/tmp/runner-idle-stalled
 
