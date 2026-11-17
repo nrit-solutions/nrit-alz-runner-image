@@ -62,8 +62,10 @@ RUN chmod +x /actions-runner/install_actions.sh \
 # README).
 ARG CHECKOV_VERSION=3.4.0
 ARG CONFTEST_VERSION=0.71.1
+# zstd: without it actions/cache falls back to gzip, which compresses the
+# provider cache much slower.
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends python3 python3-pip \
+  && apt-get install -y --no-install-recommends python3 python3-pip zstd \
   && rm -rf /var/lib/apt/lists/*
 RUN pip3 install --no-cache-dir --break-system-packages "checkov==${CHECKOV_VERSION}"
 RUN curl -sSfL -O "https://github.com/open-policy-agent/conftest/releases/download/v${CONFTEST_VERSION}/conftest_${CONFTEST_VERSION}_Linux_x86_64.tar.gz" \
@@ -72,7 +74,8 @@ RUN curl -sSfL -O "https://github.com/open-policy-agent/conftest/releases/downlo
   && tar -C /usr/local/bin -xzf "conftest_${CONFTEST_VERSION}_Linux_x86_64.tar.gz" conftest \
   && rm -f "conftest_${CONFTEST_VERSION}_Linux_x86_64.tar.gz" checksums.txt \
   && conftest --version \
-  && checkov --version
+  && checkov --version \
+  && zstd --version
 
 COPY token.sh entrypoint.sh app_token.sh queued_jobs.sh /
 RUN chmod +x /token.sh /entrypoint.sh /app_token.sh /queued_jobs.sh

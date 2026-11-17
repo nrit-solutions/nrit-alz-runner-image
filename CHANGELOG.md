@@ -9,6 +9,13 @@ CVE rebuilds are patch, removing or renaming a baked tool is major.
 
 ## [Unreleased]
 
+### Added
+
+- `zstd`. Without it `actions/cache` falls back to gzip on the runner. On
+  2026-11-17 a 222 MB provider cache took 8 s to unpack and 32 s to compress
+  inside a plan job. Cache entries saved with gzip are not read by a runner
+  with zstd, so the first job on the new image saves each cache once more.
+
 ## [2.4.0] - 2026-11-09
 
 ### Changed
