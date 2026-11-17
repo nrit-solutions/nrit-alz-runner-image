@@ -9,6 +9,8 @@ CVE rebuilds are patch, removing or renaming a baked tool is major.
 
 ## [Unreleased]
 
+## [2.5.0] - 2026-11-17
+
 ### Added
 
 - `zstd`. Without it `actions/cache` falls back to gzip on the runner. On
