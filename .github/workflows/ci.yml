@@ -46,6 +46,7 @@ jobs:
           docker run --rm --entrypoint "" local/alz-runner:pr bash -ec '
             conftest --version
             checkov --version
+            zstd --version
             az version --output none
             git --version
             jq --version
